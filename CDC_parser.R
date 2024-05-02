@@ -19,6 +19,7 @@ library(dplyr)
 library(tidyr)
 library(magrittr)
 library(ggplot2)
+library(odbc)
 
 # The function below will download and parse each year of data.
 # Note that older files may require coding tweaks to adapt to older file structures.
@@ -167,7 +168,7 @@ load("gun_deaths_14.RData")
 load("gun_deaths_13.RData")
 load("gun_deaths_12.RData")
 
-all_guns <- rbind(guns_12, guns_13, guns_14)
+all_guns <- rbind(guns_12 guns_13, guns_14)
 all_guns <- all_guns %>%
   filter(res_status != 4)
 
@@ -206,3 +207,9 @@ all_guns %>%
 
 save(all_guns, file = "all_guns.RData")
 write.csv(all_guns, file = "full_data.csv")
+
+
+myconn <- DBI::dbConnect(odbc::odbc(), "snowflake", uid = "SERVICE_PROD_DATAPREP", 
+                         pwd = "passwordDROWSSAP",
+                         database = "REFINED",
+                         schema = "BRONZE")
